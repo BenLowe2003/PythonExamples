@@ -18,5 +18,9 @@ nBodyRungeKutta.py - An n body simulation with examples of newtonian gravitation
 
 skibidifizzbuzz.py - Some examples of solutions to problems in my computational mathematics module.
 
+Prime_Num_Generator - Nieve attempt to implement the euclian algorithm, a better implementaion can be found in my prime number sieve repo
+
+WaveEquasionIntegrator - Eulerian method for integrating the wave equasion from initial conditions at f(x,y,z) at t = 0.
+
 
 
