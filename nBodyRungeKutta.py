@@ -8,14 +8,29 @@ innit_conditions = [ {"i" : 0, "position" : np.array([0.0,1.0]), "velocity" : np
                      {"i" : 1, "position" : np.array([0.0,-1.0]), "velocity" : np.array([-1.5, 0.5]), "mass" : 1.0},
                      {"i" : 2, "position" : np.array([1.0,0.0]), "velocity" : np.array([0.5, -0.1]), "mass" : 1.0},]
 
+system_one = [  {"i" : 0, "position" : np.array([0.0,1.0]), "velocity" : np.array([(1/(np.pi)), 0.0]), "mass" : 1.0},
+             {"i" : 1, "position" : np.array([0.0,-1.0]), "velocity" : np.array([-(1/(np.pi)), 0.0]), "mass" : 1.0},]
 
 def innit_random(n = 2):
-    innit_conditions = [{"i" : None, "position" : np.array([None,None]), "velocity" : np.array([None, None]), "mass" : None} for i in range(n)] 
+    innit_conditions = [{"i" : None, "position" : np.array([None,None]), "velocity" : np.array([None, None]), "mass" : None} for i in range(n+1)] 
+    # Random particles 
     for i in range(n):
         innit_conditions[i]["i"] = i
         innit_conditions[i]["position"] = np.array([rand.randint(-100,100)/100, rand.randint(-100,100)/100])
         innit_conditions[i]["velocity"] = np.array([rand.randint(-100,100)/100, rand.randint(-100,100)/100])
         innit_conditions[i]["mass"] = 1.0
+
+    # Make sure that the overall momentum is zero
+    innit_conditions[n]["i"] = n+1
+    innit_conditions[n]["position"] = np.array([rand.randint(-100,100)/100, rand.randint(-100,100)/100])
+    #find total momentum
+    momentum = np.array([0.0,0.0])         
+    for i in range(n):
+        momentum += innit_conditions[i]["velocity"]
+    #write momentum of correction particle 
+    innit_conditions[n]["velocity"] = - momentum
+    innit_conditions[n]["mass"] = 1.0
+    
     return innit_conditions
 
 
@@ -33,7 +48,7 @@ def gravity(state, particle, time_step, G = 1):
     return acceleration
 
 
-def simulation(iterations = 10000 , total_time = 5, innit_conditions = innit_random(), acceleration_calculation = gravity):
+def simulation(iterations = 100 , total_time = 5, innit_conditions = innit_random(), acceleration_calculation = gravity):
 
     time_step = total_time/iterations
     state = innit_conditions
@@ -78,20 +93,21 @@ def simulation(iterations = 10000 , total_time = 5, innit_conditions = innit_ran
 
 
 
-def print_sim(time_states, window_size = 1024):
+def print_sim(time_states, window_size = 1024, scale_factor = 50):
     window = gr.GraphWin("Simulation", window_size, window_size)
     
     for t in time_states:
 
         for i in t:
             #print("position: " + str(i["position"]) + "\n velocity " + str(i["velocity"]))
-            p = gr.Point(int(i["position"][0]*100+window_size/2), int(i["position"][1]*+window_size/2))
+            p = gr.Point(int(i["position"][0]*scale_factor+window_size/2), int(i["position"][1]*scale_factor+window_size/2))
             c = gr.Circle(p, 1)
             c.draw(window)
 
 
     window.getMouse()
     window.close()
+        
      
             
             
